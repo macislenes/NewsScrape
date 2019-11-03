@@ -1,0 +1,86 @@
+<div class='container'>
+    <div class="card">
+
+        <div class="card-body">
+            <h5 id='articleHeadline' class="card-title">{{article.title}}</h5>
+            <p id='articleSummary' class="card-text">{{article.description}}</p>
+        </div>
+        <div style='padding: 10px'>
+            <a href='#' id = "add-comment-button" onclick="$('#add-comment-div').show(); $('#add-comment-button').hide(); return false;">Add comment</a>
+            <div id='add-comment-div'>
+    <form id='userCommentInputForm'>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Username</label>
+                <input id='usernameInput' type="name" class="form-control" id="usernameInput" aria-describedby="emailHelp"
+                    placeholder="Enter Username">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Your comment</label>
+                <textarea id='userCommentInput' class="form-control" rows="3"></textarea> 
+            </div>
+            <button id='submitCommentButton' type="submit" class="btn btn-primary">Submit</button>
+        </form>
+</div>      <br/><br/>
+            {{#if comments}}
+            <h5>Comments others have left on this article:</h5>
+            {{/if}}
+        </div>
+        
+        
+        {{#each comments}}
+        <div style='padding: 10px'>
+            <h6 id='userComment'>"{{comment}}"</h6>
+            <h7 id='username'>&nbsp;-&nbsp;{{email}}</h7>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:12px"><a href="#" onclick="delete_comment('{{_id}}')">Delete Comment</a></span>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<script>
+
+    $('#add-comment-div').hide();
+
+    $('#submitCommentButton').on('click', function (){
+
+        let username =  $('#usernameInput').val().trim().toLowerCase();
+
+        let userComment = $('#userCommentInput').val().trim().toLowerCase();
+
+        let userCommentDetails = {
+
+            username: username,
+            user_comments: userComment,
+            created: Date.now()
+
+        };
+
+        $.ajax('article-comments/{{{article._id}}}', {
+
+            type: 'POST',
+            data: userCommentDetails,
+
+
+        }).done(function(){
+
+            window.location.reload();
+
+        })
+
+        return false;
+    })
+
+    function delete_comment(commentId){
+        $.ajax('article-comments/'+commentId, {
+
+            type: 'DELETE',
+
+
+        }).done(function(){
+
+            window.location.reload();
+
+        })
+    }
+
+</script>
